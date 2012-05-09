@@ -3,7 +3,7 @@
     "copyright": "nothing 2012",
     "cates": [
         {"name": "tech", "text":"技术"},
-        {"name": "art", "text":"FUCK"},
+        {"name": "art", "text":"爱洞特漏"},
         {"name": "other", "text":"其它"}
     ],
     "articles":[
