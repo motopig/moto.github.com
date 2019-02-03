@@ -2,42 +2,49 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>42</title>
-    <link>http://4m2.top/</link>
+    <link>https://4m2.top/</link>
     <description>Recent content on 42</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 03 Feb 2019 22:32:41 +0800</lastBuildDate>
     
-        <atom:link href="http://4m2.top/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://4m2.top/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Hello</title>
-      <link>http://4m2.top/posts/hello/</link>
+      <link>https://4m2.top/posts/hello/</link>
       <pubDate>Sun, 03 Feb 2019 22:32:41 +0800</pubDate>
       
-      <guid>http://4m2.top/posts/hello/</guid>
+      <guid>https://4m2.top/posts/hello/</guid>
       <description>&lt;p&gt;Hello Word&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>About</title>
-      <link>http://4m2.top/about/</link>
+      <link>https://4m2.top/about/</link>
       <pubDate>Sun, 03 Feb 2019 17:08:08 +0800</pubDate>
       
-      <guid>http://4m2.top/about/</guid>
-      <description>&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;func main() {
-  // todo
-}&lt;/pre&gt;&lt;/div&gt;</description>
+      <guid>https://4m2.top/about/</guid>
+      <description>&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;在一条不成为全栈工程师的道路上尽量奔跑
+
+年幼时喜欢攒钱买10块钱一本的汽车画报，最喜欢的汽车车型是铃木北斗星，
+摩托车是本田125， 10岁的时候学会了骑家里的2冲程三洋125踏板
+摩托车，有数次骑着幼兽被交警在小胡同追的经历，当然是追不上我的。
+
+上学期间在校篮球队混过一段时间，但是并没有女同学关照。
+
+工作coding快9年，期间和几个同事开公司3年最终不欢而散 很是凄惨，
+现在转而打工。 &lt;/pre&gt;&lt;/div&gt;</description>
     </item>
     
     <item>
       <title>Archives</title>
-      <link>http://4m2.top/archives/</link>
+      <link>https://4m2.top/archives/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://4m2.top/archives/</guid>
+      <guid>https://4m2.top/archives/</guid>
       <description></description>
     </item>
     
