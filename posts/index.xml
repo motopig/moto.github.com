@@ -67,6 +67,10 @@
 }&lt;/pre&gt;&lt;/div&gt;
 &lt;h3 id=&#34;比特币多签钱包&#34;&gt;比特币多签钱包&lt;/h3&gt;
 
+&lt;h4 id=&#34;多签流程&#34;&gt;多签流程&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://4m2.top/images/btc_multsig_process.png&#34; alt=&#34;多签流程&#34; /&gt;&lt;/p&gt;
+
 &lt;h4 id=&#34;创建-2-3-多签钱包&#34;&gt;创建 2-3 多签钱包&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;  const pubkeys = [&amp;#39;pub1&amp;#39;,&amp;#39;pub2&amp;#39;,&amp;#39;pub3&amp;#39;];
   const confirmNum = 2;
