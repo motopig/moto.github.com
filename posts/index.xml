@@ -6,10 +6,78 @@
     <description>Recent content in Posts on 42</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 03 Feb 2019 22:32:41 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 04 Feb 2019 14:28:44 +0800</lastBuildDate>
     
         <atom:link href="https://4m2.top/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>比特币钱包</title>
+      <link>https://4m2.top/posts/wallet/</link>
+      <pubDate>Mon, 04 Feb 2019 14:28:44 +0800</pubDate>
+      
+      <guid>https://4m2.top/posts/wallet/</guid>
+      <description>
+
+&lt;p&gt;年前这段时间一直在写钱包，基于electron的桌面端和rn的手机端 支持以太坊，比特币和usdt，去年年中写过一个监控以太坊地址流通的小工具，所以对以太坊的体系还算了解，主要时间都花在查阅比特币技术上了，因为个人服务器配置太弱所以没有搭建3条链的节点，都是使用一些公开节点和服务工具来辅助完成的一些转账流程，因为3条链的钱包都实现了各自的多签钱包，所以还需要后端服务来支撑多签流程，钱包逻辑主要使用 &lt;a href=&#34;https://github.com/bitcoinjs/bitcoinjs-lib&#34;&gt;bitcoinjs-lib&lt;/a&gt; 库来实现。下面把我用到的一些公开节点和服务工具API列一下&lt;/p&gt;
+
+&lt;h3 id=&#34;比特币转账费估算api&#34;&gt;比特币转账费估算API&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://bitcoinfees.earn.com/api/v1/fees/recommended&#34;&gt;每byte多少聪&lt;/a&gt;
+这个接口返回的是json数据, 费用的单位是 satoshis per byte
+(每byte多少聪),这里 1BTC = 100000000 satoshis&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;{
+  fastestFee: 8,  // 最快到账转账费
+  halfHourFee: 8, // 半小时到账转账费
+  hourFee: 2      // 一小时到账转账费
+}&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;除了需要知道每byte需要多少聪之外，还需要知道转账字节数总共是多少byte，因为这个
+直接决定了转账费的大小。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;关于单签转账字节数计算有一个计算公式:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;148 * inputs 数量 + 34 * outputs 数量 + 10&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;详细介绍可以参考 &lt;a href=&#34;https://en.bitcoin.it/wiki/Transaction#General_format_of_a_Bitcoin_transaction_.28inside_a_block.29&#34;&gt;bitcoin wiki&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;比特币查询未花费列表api&#34;&gt;比特币查询未花费列表API&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://blockchain.info/unspent?cors=true&amp;amp;active=18mkjbVaHAcMauL6iiy7zm9VjMYCjy4UU1&#34;&gt;查询unspent&lt;/a&gt;
+这个接口返回查询地址的所有未花费列表，需要注意的是 tx_hash_big_endian 字段才是交易时需要放入addInput中的第一个参数，而不是tx_hash字段。未花费数量对应下笔交易addInput的数量。&lt;/p&gt;
+
+&lt;h3 id=&#34;比特币查询余额api&#34;&gt;比特币查询余额API&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://blockchain.info/balance?cors=true&amp;amp;active=18mkjbVaHAcMauL6iiy7zm9VjMYCjy4UU1&#34;&gt;查询balance&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;{
+  18mkjbVaHAcMauL6iiy7zm9VjMYCjy4UU1: {
+    final_balance: 4500003974539,  // 最终余额 需要除以10^8
+    n_tx: 56,
+    total_received: 16800033918650 // 总共接受
+  }
+}&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&#34;比特币交易广播api&#34;&gt;比特币交易广播API&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://chain.api.btc.com/v3/tools/tx-publish&#34;&gt;交易广播&lt;/a&gt; POST&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;{
+    &amp;#34;rawhex&amp;#34;: &amp;#34;hex string&amp;#34;
+}&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&#34;比特币多签钱包&#34;&gt;比特币多签钱包&lt;/h3&gt;
+
+&lt;h4 id=&#34;创建-2-3-多签钱包&#34;&gt;创建 2-3 多签钱包&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;  const pubkeys = [&amp;#39;pub1&amp;#39;,&amp;#39;pub2&amp;#39;,&amp;#39;pub3&amp;#39;];
+  const confirmNum = 2;
+  const { address } = bitcoin.payments.p2sh({
+    redeem: bitcoin.payments.p2ms({ m: confirmNum, pubkeys }),
+  });&lt;/pre&gt;&lt;/div&gt;
+&lt;h4 id=&#34;交易&#34;&gt;交易&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gist.github.com/motopig/e2f03569700af765869025c84750c981&#34;&gt;交易gist&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Hello</title>
