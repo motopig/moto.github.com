@@ -6,10 +6,133 @@
     <description>Recent content on 42</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 Feb 2019 19:16:01 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 02 Mar 2019 22:14:54 +0800</lastBuildDate>
     
         <atom:link href="https://4m2.top/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Golang_pprof</title>
+      <link>https://4m2.top/posts/golang_pprof/</link>
+      <pubDate>Sat, 02 Mar 2019 22:14:54 +0800</pubDate>
+      
+      <guid>https://4m2.top/posts/golang_pprof/</guid>
+      <description>&lt;p&gt;#Golang 性能监控之 pprof&lt;/p&gt;
+
+&lt;p&gt;项目中写了一些处理以太坊交易数据的服务和提供这些数据的rest接口，由于历史交易数据量挺大所以有必要针对数据处理和接口做一些性能测试，在这里处理数据的逻辑直接使用golang 的beachmark来写了，reset接口使用wrk来压测了，性能分析则使用了 pprof。&lt;/p&gt;
+
+&lt;p&gt;pprof 可是说是golang自带的性能分析利器，和facebook出的php性能分析工具 xhprof 类似&lt;/p&gt;
+
+&lt;p&gt;pprof 包可以在两处引入&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;net/http/pprof
+ 
+runtime/pprof&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;net/http/pprof 包看源码可知是对 runtime.pprof 包的封装，提供了web查看的方式 &lt;a href=&#34;http://localhost:port/debug/pprof/&#34;&gt;http://localhost:port/debug/pprof/&lt;/a&gt; 直接看到当前web服务的状态，包括CPU占用情况和内存使用情况等。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;http.HandleFunc(&amp;#34;/debug/pprof/&amp;#34;, Index)
+http.HandleFunc(&amp;#34;/debug/pprof/cmdline&amp;#34;, Cmdline)
+http.HandleFunc(&amp;#34;/debug/pprof/profile&amp;#34;, Profile)
+http.HandleFunc(&amp;#34;/debug/pprof/symbol&amp;#34;, Symbol)
+http.HandleFunc(&amp;#34;/debug/pprof/trace&amp;#34;, Trace)&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;通过路由定义即可知所查看的信息,具体信息可以查看go/1.12/libexec/src/net/http/pprof/pprof.go文件的详细注释。&lt;/p&gt;
+
+&lt;p&gt;而使用 runtime/pprof 包可以将监控信息写入文件，并且后续可以使用 pprof 工具 ( go tool pprof ) 来处理分析监控信息。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;var profile = &amp;#34;profile.out&amp;#34;
+func main() {
+		// 创建 profile 文件
+		f, err := os.Create(*profile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// 开启 CPU profiling
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+		// 需要性能监控的代码
+		...
+		...
+}&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;$ go tool pprof profile.out&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;使用工具查看时 可以在交互命令行中输入 help 来查看所支持的所有命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;go tool  pprof  http://localhost:port/debug/pprof/heap
+Fetching profile over HTTP from http://localhost:8086/debug/pprof/heap
+Saved profile in /Users/xxx/pprof/pprof.alloc_objects.alloc_space.inuse_objects.inuse_space.004.pb.gz
+Type: inuse_space
+Time: Mar 2, 2019 at 9:24pm (CST)
+Entering interactive mode (type &amp;#34;help&amp;#34; for commands, &amp;#34;o&amp;#34; for options)
+(pprof) help
+  Commands:
+    callgrind        Outputs a graph in callgrind format
+    comments         Output all profile comments
+    disasm           Output assembly listings annotated with samples
+    dot              Outputs a graph in DOT format
+    eog              Visualize graph through eog
+    evince           Visualize graph through evince
+    gif              Outputs a graph image in GIF format
+    gv               Visualize graph through gv
+    kcachegrind      Visualize report in KCachegrind
+    list             Output annotated source for functions matching regexp
+    pdf              Outputs a graph in PDF format
+    peek             Output callers/callees of functions matching regexp
+    png              Outputs a graph image in PNG format
+    proto            Outputs the profile in compressed protobuf format
+    ps               Outputs a graph in PS format
+    raw              Outputs a text representation of the raw profile
+    svg              Outputs a graph in SVG format
+    tags             Outputs all tags in the profile
+    text             Outputs top entries in text form
+    top              Outputs top entries in text form
+    topproto         Outputs top entries in compressed protobuf format
+    traces           Outputs all profile samples in text form
+    tree             Outputs a text rendering of call graph
+    web              Visualize graph through web browser
+    weblist          Display annotated source in a web browser
+    o/options        List options and their current values
+    quit/exit/^D     Exit pprof
+
+  Options:
+    call_tree        Create a context-sensitive call tree
+    compact_labels   Show minimal headers
+    divide_by        Ratio to divide all samples before visualization
+    drop_negative    Ignore negative differences
+    edgefraction     Hide edges below &amp;lt;f&amp;gt;*total
+    focus            Restricts to samples going through a node matching regexp
+    hide             Skips nodes matching regexp
+    ignore           Skips paths going through any nodes matching regexp
+    mean             Average sample value over first value (count)
+    nodecount        Max number of nodes to show
+    nodefraction     Hide nodes below &amp;lt;f&amp;gt;*total
+    noinlines        Ignore inlines.
+    normalize        Scales profile based on the base profile.
+    output           Output filename for file-based outputs
+    prune_from       Drops any functions below the matched frame.
+    relative_percentages Show percentages relative to focused subgraph
+    sample_index     Sample value to report (0-based index or name)
+    show             Only show nodes matching regexp
+    show_from        Drops functions above the highest matched frame.
+    source_path      Search path for source files
+    tagfocus         Restricts to samples with tags in range or matched by regexp
+    taghide          Skip tags matching this regexp
+    tagignore        Discard samples with tags in range or matched by regexp
+    tagshow          Only consider tags matching this regexp
+    trim             Honor nodefraction/edgefraction/nodecount defaults
+    trim_path        Path to trim from source paths before search
+    unit             Measurement units to display
+
+  Option groups (only set one per group):
+    cumulative
+      cum              Sort entries based on cumulative weight
+      flat             Sort entries based on own weight
+    granularity
+      addresses        Aggregate at the address level.
+      filefunctions    Aggregate at the function level.
+      files            Aggregate at the file level.
+      functions        Aggregate at the function level.
+      lines            Aggregate at the source code line level.
+  :   Clear focus/ignore/hide/tagfocus/tagignore
+
+  type &amp;#34;help &amp;lt;cmd|option&amp;gt;&amp;#34; for more information
+(pprof) svg&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;其中输入svg 可以生成性能监控的 svg图，但是需要graphviz的支持，这一点和 xhprof 也是一致的，mac上可以使用 brew install graphviz 来安装。有了svg图的支撑，分析问题 确定问题代码就方便很多了。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Shameless</title>
