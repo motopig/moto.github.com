@@ -50,6 +50,8 @@ func main() {
 		...
 		...
 }&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;$ go tool pprof profile.out&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;可以直接以web方式查看&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;go tool  pprof -http=:8080 -web  http://localhost:7777/debug/pprof/heap&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;使用工具查看时 可以在交互命令行中输入 help 来查看所支持的所有命令&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;go tool  pprof  http://localhost:port/debug/pprof/heap
 Fetching profile over HTTP from http://localhost:8086/debug/pprof/heap
